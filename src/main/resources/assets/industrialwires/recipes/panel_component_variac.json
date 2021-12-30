@@ -17,8 +17,8 @@
     },
     "c": {
       "type": "industrialwires:ic2_item",
-      "name": "crafting",
-      "variant": "coil"
+      "name": "cable",
+      "variant": "type:copper"
     },
     "g": {
       "type": "forge:ore_dict",
