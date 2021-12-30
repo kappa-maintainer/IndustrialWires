@@ -21,6 +21,8 @@ import malte0811.industrialwires.IndustrialWires;
 import malte0811.industrialwires.blocks.converter.MechanicalMBBlockType;
 import malte0811.industrialwires.util.LocalSidedWorld;
 import malte0811.industrialwires.util.MBSideConfig.BlockFace;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -85,7 +87,7 @@ public class MechPartCommutator extends MechPartEnergyIO {
 	}
 
 	private static final ResourceLocation KINETIC_GEN_KEY =
-			new ResourceLocation("ic2", "kinetic_generator");
+			new ResourceLocation("ic2", "hv-rfproducer-classic");
 	@Override
 	public boolean canForm(LocalSidedWorld w) {
 		if (!IWConfig.MechConversion.allowMBEU()) {
@@ -95,6 +97,7 @@ public class MechPartCommutator extends MechPartEnergyIO {
 		TileEntity te = w.getTileEntity(BlockPos.ORIGIN);
 		if (te!=null) {
 			ResourceLocation loc = TileEntity.getKey(te.getClass());
+			IndustrialWires.logger.info(loc + " | " + KINETIC_GEN_KEY);
 			return loc != null && loc.equals(KINETIC_GEN_KEY);
 		}
 		return false;
@@ -121,7 +124,7 @@ public class MechPartCommutator extends MechPartEnergyIO {
 		if (IndustrialWires.ic2TeBlock!=null) {
 			NBTTagCompound dummyNbt = new NBTTagCompound();
 			dummyNbt.setString("id", KINETIC_GEN_KEY.toString());
-			world.setBlockState(BlockPos.ORIGIN, IndustrialWires.ic2TeBlock.getDefaultState());
+			world.setBlockState(BlockPos.ORIGIN, IndustrialWires.ic2TeBlock.getDefaultState().withProperty((IProperty) PropertyInteger.create("metadata", 0, 15), Integer.valueOf(8)));
 			world.setTileEntity(BlockPos.ORIGIN, TileEntity.create(world.getWorld(), dummyNbt));
 		}
 	}

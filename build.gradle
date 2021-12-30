@@ -79,10 +79,14 @@ repositories {
         name = "chickenbones"
         url = "http://chickenbones.net/maven"
     }
+    maven {
+        url = "https://www.cursemaven.com"
+    }
 }
 
 dependencies {
-    deobfCompile 'net.industrial-craft:industrialcraft-2:2.8.+'
+    //deobfCompile 'net.industrial-craft:industrialcraft-2:2.8.+'
+    compile "curse.maven:ic2_classic-242942:3093607"
     deobfCompile "blusunrize:ImmersiveEngineering:0.12-+"
     compileOnly "pl.asie.charset:charset:0.5.6.4.19:full"
     //Project red and runtime dependencies

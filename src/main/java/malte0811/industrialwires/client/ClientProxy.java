@@ -164,13 +164,7 @@ public class ClientProxy extends CommonProxy {
 			List<IManualPage> entry = splitter.toManualEntry();
 			m.addEntry("industrialwires.wires", IndustrialWires.MODID, entry.toArray(new IManualPage[0]));
 		}
-		if (hasIC2 && IndustrialWires.mechConv != null) {
-			m.addEntry("industrialwires.mechConv", "industrialwires",
-					new ManualPages.Crafting(m, "industrialwires.mechConv0", new ItemStack(IndustrialWires.mechConv, 1, 1)),
-					new ManualPages.Crafting(m, "industrialwires.mechConv1", new ItemStack(IndustrialWires.mechConv, 1, 2)),
-					new ManualPages.Crafting(m, "industrialwires.mechConv2", new ItemStack(IndustrialWires.mechConv, 1, 0))
-			);
-		}
+
 		addUnblockableSounds(TINNITUS, TURN_FAST, TURN_SLOW);
 
 		ClientUtils.mc().getItemColors().registerItemColorHandler((stack, pass) -> {

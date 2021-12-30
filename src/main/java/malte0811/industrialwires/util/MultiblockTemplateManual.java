@@ -17,6 +17,7 @@ package malte0811.industrialwires.util;
 
 import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.api.crafting.IngredientStack;
+import malte0811.industrialwires.IndustrialWires;
 import malte0811.industrialwires.compat.Compat;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -70,10 +71,13 @@ public class MultiblockTemplateManual implements MultiblockHandler.IMultiblock {
 			}
 			realStructure = new IdentityHashMap<>();
 			List<Template.BlockInfo> blocks = template.blocks;
+
 			Set<ItemStack> matsSet = new HashSet<>();
 			for (Template.BlockInfo info : blocks) {
-				ItemStack here = Compat.stackFromInfo.apply(new ItemStack(info.blockState.getBlock(), 1,
+				IndustrialWires.logger.info(info.blockState);
+				ItemStack here = Compat.stackFromInfo(new ItemStack(info.blockState.getBlock(), 1,
 						info.blockState.getBlock().getMetaFromState(info.blockState)), info);
+				//IndustrialWires.logger.info(here.getDisplayName());
 				if (!here.isEmpty()) {
 					fakeStructure[info.pos.getY()][info.pos.getX()][info.pos.getZ()] = here;
 					realStructure.put(here,

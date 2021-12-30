@@ -25,18 +25,17 @@ import ic2.api.energy.event.EnergyTileUnloadEvent;
 import ic2.api.energy.tile.IEnergyTile;
 import ic2.api.item.IBoxable;
 import ic2.api.item.IC2Items;
-import ic2.core.block.TileEntityBlock;
+import ic2.core.block.base.BlockMultiID;
+import malte0811.industrialwires.IndustrialWires;
 import malte0811.industrialwires.compat.CompatCapabilities.Charset;
 import malte0811.industrialwires.hv.MarxOreHandler;
 import malte0811.industrialwires.mech_mb.MechPartCommutator;
 import mrtjp.projectred.api.ProjectRedAPI;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.gen.structure.template.Template;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
@@ -54,7 +53,7 @@ public class Compat {
 	public static final String IC2_ID = "ic2";
 	public static final String CRAFTTWEAKER_ID = "crafttweaker";
 	public static final String CHARSET_ID = "charset";
-	public static BiFunction<ItemStack, Template.BlockInfo, ItemStack> stackFromInfo = (s, i)->s;
+	private static final ResourceLocation IC2_TE = new ResourceLocation("ic2", "blockcompactedgenerator");
 	public static BiFunction<String, String, List<ItemStack>> getIC2Item = (s, s2)->ImmutableList.of();
 	static Consumer<MarxOreHandler.OreInfo> addMarx = (o) -> {
 	};
@@ -82,6 +81,14 @@ public class Compat {
 		}
 	}
 
+	public static ItemStack stackFromInfo(ItemStack stack, Template.BlockInfo info) {
+		if (IC2_TE.equals(info.blockState.getBlock().getRegistryName()) && info.tileentityData != null) {
+			stack = (ItemStack) ((BlockMultiID) info.blockState.getBlock()).getPickBlock(info.blockState, null, null, null, null);
+			//IndustrialWires.logger.info(info.blockState + stack.getDisplayName());
+		}
+
+		return stack;
+	}
 	public static void preInit() {
 		for (Map.Entry<String, Class<? extends CompatModule>> e:modules.entrySet()) {
 			if (Loader.isModLoaded(e.getKey())) {
@@ -150,27 +157,8 @@ public class Compat {
 				Item a = s.getItem();
 				return a instanceof IBoxable && ((IBoxable) a).canBeStoredInToolbox(s);
 			});
-			MechPartCommutator.originalStack = IC2Items.getItem("te", "kinetic_generator");
-			try {
-				Class<?> teb = Class.forName("ic2.core.block.TileEntityBlock");
-				Method getPickBlock = teb.getDeclaredMethod("getPickBlock", EntityPlayer.class, RayTraceResult.class);
-				getPickBlock.setAccessible(true);
-				final ResourceLocation IC2_TE = new ResourceLocation("ic2", "te");
-				stackFromInfo = (stack, info) -> {
-					try {
-						if (info.tileentityData != null && IC2_TE.equals(info.blockState.getBlock().getRegistryName())) {
-							TileEntity te = TileEntity.create(null, info.tileentityData);
-							if (te instanceof TileEntityBlock)
-								stack = (ItemStack) getPickBlock.invoke(te, null, null);
-						}
-					} catch (NullPointerException | IllegalAccessException | InvocationTargetException x) {
-						x.printStackTrace();
-					}
-					return stack;
-				};
-			} catch (Exception x) {
-				x.printStackTrace();
-			}
+			MechPartCommutator.originalStack = IC2Items.getItem("blockcompactedgenerator", "hvRFProducer");
+
 
 		}
 	}

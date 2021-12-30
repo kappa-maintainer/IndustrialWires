@@ -111,8 +111,6 @@ public class IndustrialWires {
 
 	@GameRegistry.ObjectHolder(MODID+":"+BlockIC2Connector.NAME)
 	public static BlockIC2Connector ic2conn = null;
-	@GameRegistry.ObjectHolder(MODID+":"+BlockMechanicalConverter.NAME)
-	public static BlockMechanicalConverter mechConv = null;
 	@GameRegistry.ObjectHolder(MODID+":"+BlockJacobsLadder.NAME)
 	public static BlockJacobsLadder jacobsLadder = null;
 	@GameRegistry.ObjectHolder(MODID+":"+BlockPanel.NAME)
@@ -132,7 +130,7 @@ public class IndustrialWires {
 	public static ItemKey key = null;
 
 
-	@GameRegistry.ObjectHolder("ic2:te")
+	@GameRegistry.ObjectHolder("ic2:blockcompactedgenerator")
 	public static Block ic2TeBlock = null;
 
 	public static final SimpleNetworkWrapper packetHandler = NetworkRegistry.INSTANCE.newSimpleChannel(MODID);
@@ -181,11 +179,6 @@ public class IndustrialWires {
 		GameRegistry.registerTileEntity(TileEntityIC2ConnectorHV.class, new ResourceLocation(MODID, "ic2ConnectorHV"));
 		GameRegistry.registerTileEntity(TileEntityIC2ConnectorGlass.class, new ResourceLocation(MODID, "ic2ConnectorGlass"));
 
-		if (hasIC2 && IWConfig.enableConversion) {
-			GameRegistry.registerTileEntity(TileEntityIEMotor.class, new ResourceLocation(MODID, "ieMotor"));
-			GameRegistry.registerTileEntity(TileEntityMechICtoIE.class, new ResourceLocation(MODID, "mechIcToIe"));
-			GameRegistry.registerTileEntity(TileEntityMechIEtoIC.class, new ResourceLocation(MODID, "mechIeToIc"));
-		}
 		GameRegistry.registerTileEntity(TileEntityMechMB.class, new ResourceLocation(MODID, "mechMB"));
 		GameRegistry.registerTileEntity(TileEntityJacobsLadder.class, new ResourceLocation(MODID, "jacobsLadder"));
 		GameRegistry.registerTileEntity(TileEntityMarx.class, new ResourceLocation(MODID, "marx_generator"));
@@ -213,9 +206,6 @@ public class IndustrialWires {
 	@SubscribeEvent
 	public static void registerBlocks(RegistryEvent.Register<Block> event) {
 
-		if (IWConfig.enableConversion&&hasIC2) {
-			event.getRegistry().register(new BlockMechanicalConverter());
-		}
 		event.getRegistry().register(new BlockIC2Connector());
 		event.getRegistry().register(new BlockJacobsLadder());
 		event.getRegistry().register(new BlockPanel());
