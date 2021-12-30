@@ -157,7 +157,7 @@ public class Compat {
 				Item a = s.getItem();
 				return a instanceof IBoxable && ((IBoxable) a).canBeStoredInToolbox(s);
 			});
-			MechPartCommutator.originalStack = IC2Items.getItem("blockcompactedgenerator", "hvRFProducer");
+			MechPartCommutator.originalStack = IC2Items.getItem("blockcompactedgenerator", "hv-rfproducer-classic");
 
 
 		}
