@@ -283,7 +283,7 @@ public class ClientProxy extends CommonProxy {
 		splitter.addSpecialPage(4, 0, 10, (s) -> new ManualPageMultiblock(m, s,
 				MechMBPart.getManualMBForPart(MechPartFourElectrodes.class)));
 		if (IWConfig.MechConversion.allowMBEU()) {
-			text += I18n.format("ie.manual.entry.industrialwires.mech_mb_parts.commutator");
+			text += I18n.format("ie.manual.entry.industrialwires.mech_mb_parts.classic.commutator");
 			splitter.addSpecialPage(5, 0, 10, (s) -> new ManualPageMultiblock(m, s,
 					MechMBPart.getManualMBForPart(MechPartCommutator4Phase.class)));
 		}
