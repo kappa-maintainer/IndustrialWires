@@ -84,7 +84,6 @@ public class Compat {
 	public static ItemStack stackFromInfo(ItemStack stack, Template.BlockInfo info) {
 		if (IC2_TE.equals(info.blockState.getBlock().getRegistryName()) && info.tileentityData != null) {
 			stack = (ItemStack) ((BlockMultiID) info.blockState.getBlock()).getPickBlock(info.blockState, null, null, null, null);
-			//IndustrialWires.logger.info(info.blockState + stack.getDisplayName());
 		}
 
 		return stack;

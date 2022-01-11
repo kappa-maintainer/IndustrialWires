@@ -74,10 +74,9 @@ public class MultiblockTemplateManual implements MultiblockHandler.IMultiblock {
 
 			Set<ItemStack> matsSet = new HashSet<>();
 			for (Template.BlockInfo info : blocks) {
-				IndustrialWires.logger.info(info.blockState);
 				ItemStack here = Compat.stackFromInfo(new ItemStack(info.blockState.getBlock(), 1,
 						info.blockState.getBlock().getMetaFromState(info.blockState)), info);
-				//IndustrialWires.logger.info(here.getDisplayName());
+				
 				if (!here.isEmpty()) {
 					fakeStructure[info.pos.getY()][info.pos.getX()][info.pos.getZ()] = here;
 					realStructure.put(here,

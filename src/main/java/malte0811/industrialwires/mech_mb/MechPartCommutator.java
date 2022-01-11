@@ -97,7 +97,6 @@ public class MechPartCommutator extends MechPartEnergyIO {
 		TileEntity te = w.getTileEntity(BlockPos.ORIGIN);
 		if (te!=null) {
 			ResourceLocation loc = TileEntity.getKey(te.getClass());
-			IndustrialWires.logger.info(loc + " | " + KINETIC_GEN_KEY);
 			return loc != null && loc.equals(KINETIC_GEN_KEY);
 		}
 		return false;
