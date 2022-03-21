@@ -1,7 +1,7 @@
 import groovy.json.JsonOutput
 
 def mainVersion = "1.8"
-def buildNumber = "42"
+def buildNumber = "43"
 
 // For those who want the bleeding edge
 buildscript {
@@ -25,7 +25,7 @@ plugins {
     id "net.minecraftforge.gradle.forge" version "2.0.2"
 }
 */
-version = "${mainVersion}-${buildNumber}"
+version = "${mainVersion}-${buildNumber}" as Object
 group= "malte0811"
 archivesBaseName = "IndustrialWires"
 
@@ -153,11 +153,20 @@ jar.finalizedBy('reobfJar')
 
 processResources
 {
-
     duplicatesStrategy(DuplicatesStrategy.INCLUDE)
-    from (sourceSets.main.resources.srcDirs) {
-        include("mcmod.info")
-        expand("version": version)
+    inputs.property "version", version
+
+    // replace stuff in mcmod.info, nothing else
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+
+        // replace version and mcversion
+        expand 'version':version
+    }
+
+    // copy everything else except the mcmod.info
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
     }
 }
 
