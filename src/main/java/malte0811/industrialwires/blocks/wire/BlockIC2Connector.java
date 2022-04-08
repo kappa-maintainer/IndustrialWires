@@ -61,6 +61,7 @@ public class BlockIC2Connector extends BlockIWBase implements IMetaEnum {
 
 	@Override
 	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) {
+		if(pos == fromPos)return;
 		TileEntity te = world.getTileEntity(pos);
 		if (te instanceof TileEntityIC2ConnectorTin) {
 			TileEntityIC2ConnectorTin connector = (TileEntityIC2ConnectorTin) te;

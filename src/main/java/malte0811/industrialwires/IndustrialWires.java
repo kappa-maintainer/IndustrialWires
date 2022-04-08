@@ -89,7 +89,7 @@ package malte0811.industrialwires;
 @Mod.EventBusSubscriber
 public class IndustrialWires {
 	public static final String MODID = "industrialwires";
-	public static final String VERSION = "${version}";
+	public static final String VERSION = "1.8-44";
 	public static final String MODNAME = "Industrial Wires";
 	public static final int DATAFIXER_VER = 1;
 	public static final SoundEvent TINNITUS = createSoundEvent(new ResourceLocation(IndustrialWires.MODID, "tinnitus"));
@@ -153,13 +153,11 @@ public class IndustrialWires {
 	@SidedProxy(clientSide = "malte0811.industrialwires.client.ClientProxy", serverSide = "malte0811.industrialwires.CommonProxy")
 	public static CommonProxy proxy;
 	public static boolean hasIC2;
-	public static boolean hasTechReborn;
 	public static boolean isOldIE;
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent e) {
 		hasIC2 = Loader.isModLoaded("ic2");
-		hasTechReborn = Loader.isModLoaded("techreborn");
 		{
 			double ieThreshold = 12.74275;
 			String ieVer = Loader.instance().getIndexedModList().get(ImmersiveEngineering.MODID).getDisplayVersion();

@@ -24,7 +24,6 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraftforge.common.crafting.CompoundIngredient;
 import net.minecraftforge.common.crafting.IngredientNBT;
 import net.minecraftforge.oredict.OreIngredient;
-import techreborn.api.TechRebornAPI;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -41,22 +40,6 @@ public final class IC2TRHelper {
 		Collection<Ingredient> ingreds;
 		{
 			Set<ItemStack> stacks = new HashSet<>(Compat.getIC2Item.apply(type, variant));
-			if (IndustrialWires.hasTechReborn) {
-				switch (type) {
-					case "cable":
-						stacks.add(getTRCable(variant));
-						break;
-					case "crafting":
-						if ("alloy".equals(variant)) {
-							stacks.add(TechRebornAPI.subItemRetriever.getPlateByName("advanced_alloy"));
-						}
-						break;
-					case "te":
-						if (variant.equals("mv_transformer")) {
-							stacks.add(new ItemStack(TechRebornAPI.getBlock("MV_TRANSFORMER")));
-						}
-				}
-			}
 			stacks.removeIf(ItemStack::isEmpty);
 			ingreds = stacks.stream().map(MyNBTIngredient::new).collect(Collectors.toList());
 		}
@@ -91,31 +74,6 @@ public final class IC2TRHelper {
 		return new MyCompoundIngredient(ingreds);
 	}
 
-	public static ItemStack getTRCable(String variant) {
-		String cableType = variant.substring("type:".length(), variant.indexOf(','));
-		int meta = -1;
-		switch (cableType) {
-			case "copper":
-				meta = 0;
-				break;
-			case "tin":
-				meta = 1;
-				break;
-			case "glass":
-				meta = 4;
-				break;
-			case "gold":
-				meta = 2;
-				break;
-			case "iron":
-				meta = 3;
-				break;
-		}
-		if (meta>=0&&variant.charAt(variant.length()-1)=='0') {
-			return new ItemStack(TechRebornAPI.getBlock("CABLE"), 1, meta);
-		}
-		return ItemStack.EMPTY;
-	}
 	public static Ingredient getIECable(String type) {
 		switch (type) {
 			case "gold":

@@ -10,7 +10,7 @@
       }
     },
     {
-      "length": 8,
+      "length": 1,
       "ingredient": {
         "item": "immersiveengineering:wirecoil",
         "data": 6
@@ -19,6 +19,6 @@
   ],
   "coil": {
     "item": "industrialwires:ic2_wire_coil",
-    "data": 6
+    "data": 5
   }
 }

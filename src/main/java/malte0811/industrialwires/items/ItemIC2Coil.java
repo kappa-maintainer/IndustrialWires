@@ -41,7 +41,7 @@ import java.util.List;
 
 public class ItemIC2Coil extends Item implements IWireCoil {
 	public final static String[] subNames = {
-			"tin", "copper", "gold", "hv", "glass", "tin_ins", "copper_ins", "gold_ins"
+			"tin", "copper", "gold", "hv", "glass", "copper_ins", "gold_ins"
 	};
 	public final static String lengthKey = "wireLength";
 	public final static String NAME = "ic2_wire_coil";

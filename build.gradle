@@ -1,7 +1,6 @@
-import groovy.json.JsonOutput
 
 def mainVersion = "1.8"
-def buildNumber = "43"
+def buildNumber = "44"
 
 // For those who want the bleeding edge
 buildscript {
@@ -11,7 +10,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:5.1.+'
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
     }
 }
 
@@ -45,6 +44,13 @@ minecraft {
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
+
+            mods {
+                industrialwires {
+                    source sourceSets.main
+                }
+            }
+            
         }
 
         server {
@@ -54,9 +60,36 @@ minecraft {
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
+
+            mods {
+                industrialwires {
+                    source sourceSets.main
+                }
+            }
+            
+        }
+
+
+        data {
+            workingDirectory project.file('run')
+
+            property 'forge.logging.markers', 'REGISTRIES'
+
+            property 'forge.logging.console.level', 'debug'
+
+            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
+            args '--mod', 'industrialwires', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+
+            mods {
+                industrialwires {
+                    source sourceSets.main
+                }
+            }
         }
     }
 }
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 configurations {
     compileJar {
@@ -66,16 +99,8 @@ configurations {
 
 repositories {
     maven {
-        name 'ic2'
-        url 'https://maven.ic2.player.to/'
-    }
-    maven {
-        name 'tr'
-        url 'https://maven.modmuss50.me'
-    }
-    maven {
         name 'jared maven'
-        url 'https://blamejared.com/maven'
+        url 'https://maven.blamejared.com'
     }
     maven { // Albedo/Mirage Lights
         url 'https://repo.elytradev.com/'
@@ -83,22 +108,6 @@ repositories {
     maven { // JEI & Tinkers
         name 'DVS1 Maven FS'
         url 'https://dvs1.progwml6.com/files/maven'
-    }
-    // dependencies of TR...
-    maven {
-
-        url 'https://maven.mcmoddev.com'
-    }
-    maven {
-        // HWYLA
-        name "TehNut"
-        url "https://maven.tehnut.info"
-    }
-    repositories {//Curseforge maven for project red
-        maven {
-            name = "CurseForge"
-            url = "https://minecraft.curseforge.com/api/maven/"
-        }
     }
     maven {
         name = "chickenbones"
@@ -118,7 +127,9 @@ dependencies {
     
     //deobfCompile 'net.industrial-craft:industrialcraft-2:2.8.+'
     compileOnly fg.deobf("curse.maven:ic2_classic-242942:3093607")
+    runtimeOnly "curse.maven:ic2_classic-242942:3093607"
     compileOnly fg.deobf("blusunrize:ImmersiveEngineering:0.12-+")
+    runtimeOnly fg.deobf("blusunrize:ImmersiveEngineering:0.12-+")
     compileOnly "pl.asie.charset:charset:0.5.6.4.19:full"
     //Project red and runtime dependencies
     //compileOnly "project-red-core:ProjectRed-1.12.2:4.9.4.120:Base"
@@ -128,14 +139,11 @@ dependencies {
     //runtime "codechicken:CodeChickenLib:1.12.2-3.2.1.349:universal"
     //runtime "codechicken:ChickenASM:1.12-1.0.2.7"
     //runtime "mrtjpcore:MrTJPCore-1.12.2:2.1.3.35:universal"
-    //Tech Reborn
-    compileOnly "TechReborn:TechReborn-1.12:2.6.9.7:universal"
-    compileOnly "RebornCore:RebornCore-1.12:3.2.+:universal"
     //Others
     //TODO do something about this
     compileOnly 'com.elytradev:mirage:2.0.3-rc3-SNAPSHOT'
     compileOnly "mezz.jei:jei_1.12:4.+"
-    compileOnly "CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.1.8.460"
+    compileOnly "CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.1.20.674"
 
 }
 
