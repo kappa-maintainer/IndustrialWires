@@ -57,6 +57,17 @@ public class MarxOreHandler {
 		}
 		putOre("oreUranium", 1.25, 4,
 				IndustrialWires.hasIC2?"crushedUranium":"dustUranium", "nuggetUranium");
+		if(IndustrialWires.hasII) {
+			String[] iiores = {"Platinum", "Zinc", "Lead", "Silver", "Nickel", "Tin"};
+
+			putOre("orePlatinum", 1, 4, "dustPlatinum", "nuggetPlatinum");
+			putOre("oreZinc", .75, 4, "dustZinc", "nuggetZinc");
+			putOre("oreTungsten", 2, 4, "dustTungsten", "nuggetTungsten");
+			putOre("oreSalt", .5, 4, "dustSalt");
+			putOre("oreFluorite", .75, 4, "gemFluorite");
+			putOre("orePhosphorus", .75, 4, "gemPhosphorus");
+
+		}
 	}
 
 	public static void init() {

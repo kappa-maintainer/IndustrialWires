@@ -1,6 +1,6 @@
 
 def mainVersion = "1.8"
-def buildNumber = "44"
+def buildNumber = "45"
 
 // For those who want the bleeding edge
 buildscript {
@@ -142,7 +142,11 @@ dependencies {
     //Others
     //TODO do something about this
     compileOnly 'com.elytradev:mirage:2.0.3-rc3-SNAPSHOT'
-    compileOnly "mezz.jei:jei_1.12:4.+"
+    runtimeOnly 'com.elytradev:mirage:2.0.3-rc3-SNAPSHOT'
+
+    compileOnly "mezz.jei:jei_1.12.2:4.16.1.302"
+    runtimeOnly "mezz.jei:jei_1.12.2:4.16.1.302"
+
     compileOnly "CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.1.20.674"
 
 }

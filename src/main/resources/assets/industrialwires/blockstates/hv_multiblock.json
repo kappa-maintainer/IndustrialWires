@@ -88,6 +88,13 @@
 		{
 			"false": {},
 			"true": {}
+		},
+		"_0multiblockslave":
+		{
+			"false":{},
+			"true":{
+				"model": "immersiveengineering:ie_empty"
+			}
 		}
 	}
 }

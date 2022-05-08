@@ -89,7 +89,7 @@ package malte0811.industrialwires;
 @Mod.EventBusSubscriber
 public class IndustrialWires {
 	public static final String MODID = "industrialwires";
-	public static final String VERSION = "1.8-44";
+	public static final String VERSION = "1.8-45";
 	public static final String MODNAME = "Industrial Wires";
 	public static final int DATAFIXER_VER = 1;
 	public static final SoundEvent TINNITUS = createSoundEvent(new ResourceLocation(IndustrialWires.MODID, "tinnitus"));
@@ -154,7 +154,7 @@ public class IndustrialWires {
 	public static CommonProxy proxy;
 	public static boolean hasIC2;
 	public static boolean isOldIE;
-
+	public static boolean hasII;
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent e) {
 		hasIC2 = Loader.isModLoaded("ic2");
@@ -169,6 +169,7 @@ public class IndustrialWires {
 			double ieVerDouble = Double.parseDouble(start + "." + end);
 			isOldIE = ieVerDouble < ieThreshold;
 		}
+		hasII = Loader.isModLoaded("immersiveintelligence");
 		logger = e.getModLog();
 		new IWConfig();
 		GameRegistry.registerTileEntity(TileEntityIC2ConnectorTin.class, new ResourceLocation(MODID, "ic2ConnectorTin"));

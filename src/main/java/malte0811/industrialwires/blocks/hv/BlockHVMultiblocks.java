@@ -25,15 +25,20 @@ import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -43,11 +48,35 @@ public class BlockHVMultiblocks extends BlockIWMultiblock implements IMetaEnum {
 	public static final String NAME = "hv_multiblock";
 	public BlockHVMultiblocks() {
 		super(Material.IRON, NAME);
+
 	}
 
 	@Override
 	public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list) {
 		// No MB's in the creative inventory!
+	}
+	//can't fix missing particle texture, so just cancelit
+	@Override
+	public boolean addLandingEffects(IBlockState state, net.minecraft.world.WorldServer worldObj, BlockPos blockPosition, IBlockState iblockstate, EntityLivingBase entity, int numberOfParticles )
+	{
+		return true;
+	}
+	@Override
+	public boolean addRunningEffects(IBlockState state, World world, BlockPos pos, Entity entity)
+	{
+		return true;
+	}
+	@Override
+	@SideOnly(Side.CLIENT)
+	public boolean addHitEffects(IBlockState state, World worldObj, RayTraceResult target, net.minecraft.client.particle.ParticleManager manager)
+	{
+		return true;
+	}
+	@Override
+	@SideOnly(Side.CLIENT)
+	public boolean addDestroyEffects(World world, BlockPos pos, net.minecraft.client.particle.ParticleManager manager)
+	{
+		return true;
 	}
 
 	@Override
