@@ -185,7 +185,7 @@ public class ClientEventHandler {
 						new ResourceLocation(IndustrialWires.MODID,
 								BlockHVMultiblocks.NAME + (mirror ? "_mirrored" : "")),
 						getPropertyString(properties));
-				IndustrialWires.logger.info(l.toString());
+				//IndustrialWires.logger.info(l.toString());
 				return l;
 			}
 		});

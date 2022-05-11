@@ -27,6 +27,7 @@ import mezz.jei.api.gui.IGuiItemStackGroup;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.IModIngredientRegistration;
+import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeCategory;
 import mezz.jei.api.recipe.IRecipeCategoryRegistration;
 import mezz.jei.api.recipe.IRecipeWrapper;
@@ -105,6 +106,7 @@ public class JEIMarx implements IModPlugin {
 			guiItemStacks.init(0, true, 10, 17);
 			guiItemStacks.init(1, false, 62, 4);
 			guiItemStacks.init(2, false, 62, 29);
+			guiItemStacks.init(3, false, 38, 17);
 			guiItemStacks.set(ingredients);
 		}
 
@@ -122,28 +124,38 @@ public class JEIMarx implements IModPlugin {
 
 		@Override
 		public void getIngredients(@Nonnull IIngredients ingredients) {
-			ingredients.setInputLists(ItemStack.class, ImmutableList.of(recipe.exampleInput));
-			if (recipe.outputSmall!=null) {
-				ingredients.setOutputs(ItemStack.class, ImmutableList.of(
-						recipe.output.get(),
-						recipe.outputSmall.get()));
-			} else {
-				ingredients.setOutputs(ItemStack.class, ImmutableList.of(recipe.output.get(), ItemStack.EMPTY));//TODO remove second output?
-			}
+			ingredients.setInputLists(VanillaTypes.ITEM, ImmutableList.of(recipe.exampleInput));
+			ingredients.setOutputs(VanillaTypes.ITEM, ImmutableList.of(
+					recipe.output != null && recipe.output.get() != null ? recipe.output.get() : ItemStack.EMPTY,
+					recipe.outputSmall != null && recipe.outputSmall.get() != null ? recipe.outputSmall.get() : ItemStack.EMPTY,
+					recipe.blockOut != null && recipe.blockOut.get() != null ? new ItemStack(recipe.blockOut.get().getBlock()) : ItemStack.EMPTY
+			));
 		}
 
 		@Override
 		public void drawInfo(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
 			IDrawable slot = jeiHelpers.getGuiHelper().getSlotDrawable();
 			slot.draw(minecraft, 10, 17);
-			slot.draw(minecraft, 62, 4);
-			if (recipe.outputSmall!=null&&!recipe.outputSmall.get().isEmpty()) {
-				slot.draw(minecraft, 62, 29);
-				minecraft.fontRenderer.drawString("x"+ recipe.smallMax+I18n.format(IndustrialWires.MODID+".desc.jei.alt"), 85, 33, 0xff000000);
+			if (recipe.output != null && !recipe.output.get().isEmpty()) {
+				slot.draw(minecraft, 62, 4);
 			}
-			minecraft.fontRenderer.drawString("x"+ Utils.formatDouble(recipe.maxYield, "0.#") + I18n.format(IndustrialWires.MODID+".desc.jei.max"), 85, 8, 0xff000000);
+			if (recipe.outputSmall != null && !recipe.outputSmall.get().isEmpty()) {
+				slot.draw(minecraft, 62, 29);
+			}
+			if (recipe.blockOut != null && recipe.blockOut.get() != null) {
+				slot.draw(minecraft, 38, 17);
+			}
+			if (recipe.output != null && !recipe.output.get().isEmpty()) {
+				minecraft.fontRenderer.drawString("x" + Utils.formatDouble(recipe.maxYield, "0.#") + I18n.format(IndustrialWires.MODID + ".desc.jei.max"), 85, 8, 0xff000000);
+			}
+			if (recipe.outputSmall != null && !recipe.outputSmall.get().isEmpty()) {
+				minecraft.fontRenderer.drawString("x" + recipe.smallMax + I18n.format(IndustrialWires.MODID + ".desc.jei.alt"), 85, 33, 0xff000000);
+			}
+			if (recipe.blockOut != null && recipe.blockOut.get() != null) {
+				minecraft.fontRenderer.drawString("➞", 29, 22, 0xff000000);
+			}
 			minecraft.fontRenderer.drawString("~", 0, 3, 0xff000000);
-			minecraft.fontRenderer.drawString((int) (recipe.avgEnergy*MarxOreHandler.defaultEnergy/1000)+" kJ",
+			minecraft.fontRenderer.drawString((int) (recipe.avgEnergy * MarxOreHandler.defaultEnergy / 1000) + " kJ",
 					minecraft.fontRenderer.getCharWidth('~'), 0, 0xff000000);
 		}
 	}

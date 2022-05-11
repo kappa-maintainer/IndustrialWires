@@ -59,6 +59,7 @@ industrialwires.desc.jei.alt= (alternative)
 industrialwires.desc.jei.max= (max.)
 industrialwires.desc.input=Input
 industrialwires.desc.output=Main Output
+industrialwires.desc.blockout=Block Output
 industrialwires.desc.alt=Replacement
 industrialwires.desc.ideal_e=Ideal Energy
 industrialwires.desc.inertia=Inertia

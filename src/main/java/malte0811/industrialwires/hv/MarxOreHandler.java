@@ -52,15 +52,11 @@ public class MarxOreHandler {
 		putOre("oreRedstone", 1, 12, "dustRedstone");
 		putOre("oreQuartz", 1, 6, "gemQuartz");
 		// IE ores
-		String[] ores = {"Copper", "Aluminum", "Lead", "Silver", "Nickel", "Tin"};
+		String[] ores = {"Copper", "Aluminum", "Lead", "Silver", "Nickel", "Tin", "Uranium"};
 		for (String ore : ores) {
 			putOre("ore" + ore, .75, 4, "dust" + ore, "nugget" + ore);
 		}
-		putOre("oreUranium", 1.25, 4,
-				IndustrialWires.hasIC2?"crushedUranium":"dustUranium", "nuggetUranium");
 		if(IndustrialWires.hasII) {
-			String[] iiores = {"Platinum", "Zinc", "Lead", "Silver", "Nickel", "Tin"};
-
 			putOre("orePlatinum", 1, 4, "dustPlatinum", "nuggetPlatinum");
 			putOre("oreZinc", .75, 4, "dustZinc", "nuggetZinc");
 			putOre("oreTungsten", 2, 4, "dustTungsten", "nuggetTungsten");
@@ -146,7 +142,7 @@ public class MarxOreHandler {
         for (OreInfo ore : oreData) {
             if (ore.isValid.test(world, pos)) {
                 double idealE = modifier * ore.avgEnergy * defaultEnergy;
-                if (energy >= .75 * idealE && energy <= 1.25 * idealE && ore.blockOut != null && ore.blockOut.get() != null) {
+                if (energy >= .95 * idealE && energy <= 1.05 * idealE && ore.blockOut != null && ore.blockOut.get() != null) {
                     return ore.blockOut.get();
                 }
             }
