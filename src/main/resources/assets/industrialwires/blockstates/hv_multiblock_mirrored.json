@@ -74,7 +74,7 @@
 				"model": "industrialwires:marx_top_mirrored.obj"
 			},
 			"no_model": {
-				"model": "builtin/generated"
+				"model": "immersiveengineering:ie_empty"
 			},
 			"connector": {
 				"model": "immersiveengineering:smartmodel/connector",

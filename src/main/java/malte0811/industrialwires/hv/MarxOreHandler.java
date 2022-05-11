@@ -20,6 +20,7 @@ import blusunrize.immersiveengineering.api.crafting.IngredientStack;
 import blusunrize.immersiveengineering.common.util.Utils;
 import malte0811.industrialwires.IndustrialWires;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -73,8 +74,10 @@ public class MarxOreHandler {
 	public static void init() {
 		oreData.removeIf(
 				(info)->
-						info.exampleInput.isEmpty()||info.exampleInput.stream().allMatch(ItemStack::isEmpty)
-								||info.output.get().isEmpty()
+                        info.exampleInput.isEmpty() || info.exampleInput.stream().allMatch(ItemStack::isEmpty)
+                                || (info.output == null || info.output.get().isEmpty())
+                                && (info.outputSmall == null || info.outputSmall.get().isEmpty())
+                                && (info.blockOut == null || info.blockOut.get() == null)
 		);
 	}
 
@@ -85,7 +88,7 @@ public class MarxOreHandler {
 		put(new OreInfo(new OreChecker(oreName), getOres(oreName), avgEnergy, maxYield, oreOut, oreSmall));
 	}
 	public static void putOre(String oreName, double avgEnergy, double maxYield, Item oreOut, int meta) {
-		put(new OreInfo(new OreChecker(oreName), getOres(oreName), avgEnergy, maxYield, oreOut, meta));
+        put(new OreInfo(new OreChecker(oreName), getOres(oreName), avgEnergy, maxYield, oreOut, meta, null));
 	}
 
 	public static void put(MarxOreHandler.OreInfo output) {
@@ -111,94 +114,140 @@ public class MarxOreHandler {
 					int yield = (int) Math.floor(out);
 					out -= yield;
 					int yieldNuggets = (int) Math.round(out * ore.smallMax);
-					if (yieldNuggets >= ore.smallMax || (ore.outputSmall == null && yieldNuggets >= ore.smallMax/2F)) {
-						yield++;
-						yieldNuggets = 0;
-					}
-					if (yield > 0 && yieldNuggets > 0 && ore.outputSmall != null) {
-						return new ItemStack[]{
-								ApiUtils.copyStackWithAmount(ore.output.get(), yield),
-								ApiUtils.copyStackWithAmount(ore.outputSmall.get(), yieldNuggets)
-						};
-					} else if (yield > 0) {
-						return new ItemStack[]{
-								ApiUtils.copyStackWithAmount(ore.output.get(), yield)
-						};
-					} else if (yieldNuggets > 0 && ore.outputSmall != null) {
-						return new ItemStack[]{
-								ApiUtils.copyStackWithAmount(ore.outputSmall.get(), yieldNuggets)
-						};
-					}
-				}
-			}
-		}
-		return new ItemStack[0];
-	}
+                    if (yieldNuggets >= ore.smallMax || (ore.outputSmall == null && yieldNuggets >= ore.smallMax / 2F)) {
+                        yield++;
+                        yieldNuggets = 0;
+                    }
+                    if (yield > 0 && yieldNuggets > 0 && ore.outputSmall != null && ore.output != null) {
+                        return new ItemStack[]{
+                                ApiUtils.copyStackWithAmount(ore.output.get(), yield),
+                                ApiUtils.copyStackWithAmount(ore.outputSmall.get(), yieldNuggets)
+                        };
+                    } else if (yield > 0 && ore.output != null) {
+                        return new ItemStack[]{
+                                ApiUtils.copyStackWithAmount(ore.output.get(), yield)
+                        };
+                    } else if (yieldNuggets > 0 && ore.outputSmall != null) {
+                        return new ItemStack[]{
+                                ApiUtils.copyStackWithAmount(ore.outputSmall.get(), yieldNuggets)
+                        };
+                    }
+                }
+            }
+        }
+        return new ItemStack[0];
+    }
 
-	private static double getNormalizedNormalDist(double x, double sigma, double mu) {
-		return Math.exp(-(x - mu) * (x - mu) / (2 * sigma * sigma));
-	}
+    public static IBlockState getBlockYield(World world, BlockPos pos, double energy) {
+        if (modifier < .89 || modifier > 1.11) {
+            IndustrialWires.logger.error("The energy-modifier for Marx generators wasn't loaded correctly. It will be reset.");
+            resetModifier();
+        }
+        for (OreInfo ore : oreData) {
+            if (ore.isValid.test(world, pos)) {
+                double idealE = modifier * ore.avgEnergy * defaultEnergy;
+                if (energy >= .75 * idealE && energy <= 1.25 * idealE && ore.blockOut != null && ore.blockOut.get() != null) {
+                    return ore.blockOut.get();
+                }
+            }
+        }
+        return Blocks.AIR.getDefaultState();
+    }
 
-	public static List<OreInfo> getRecipes() {
-		return oreData;
-	}
+    private static double getNormalizedNormalDist(double x, double sigma, double mu) {
+        return Math.exp(-(x - mu) * (x - mu) / (2 * sigma * sigma));
+    }
 
-	public static class OreInfo {
-		//Input
-		public BiPredicate<World, BlockPos> isValid;
-		public List<ItemStack> exampleInput;
-		//Output
-		public final double avgEnergy;
-		public final double maxYield;
-		public final Supplier<ItemStack> output;
-		@Nullable
-		public final Supplier<ItemStack> outputSmall;//1/9 of output
-		public final int smallMax;
+    public static List<OreInfo> getRecipes() {
+        return oreData;
+    }
 
-		public OreInfo(BiPredicate<World, BlockPos> isValid, List<ItemStack> exampleInput, double avg, double maxYield,
-					   Supplier<ItemStack> out, @Nullable Supplier<ItemStack> outSmall, int smallCount) {
-			avgEnergy = avg;
-			this.maxYield = maxYield;
-			output = out;
-			outputSmall = outSmall;
-			smallMax = smallCount;
-			this.isValid = isValid;
-			this.exampleInput = exampleInput;
-		}
+    public static class OreInfo {
+        //Input
+        public BiPredicate<World, BlockPos> isValid;
+        public List<ItemStack> exampleInput;
+        //Output
+        public final double avgEnergy;
+        public final double maxYield;
+        public final Supplier<ItemStack> output;
+        @Nullable
+        public final Supplier<ItemStack> outputSmall;//1/9 of output
+        public final int smallMax;
+        @Nullable
+        public final Supplier<IBlockState> blockOut;
 
-		public OreInfo(BiPredicate<World, BlockPos> isValid, List<ItemStack> exampleInput, double avgEnergy, double maxYield,
-					   Item iOut, int mOut, @Nullable Item iOutSmall, int mOutSmall) {
-			this.avgEnergy = avgEnergy;
-			this.maxYield = maxYield;
-			this.output = new IngredientStack(new ItemStack(iOut, 1, mOut))::getExampleStack;
-			this.outputSmall = iOutSmall == null ? null : new IngredientStack(new ItemStack(iOutSmall, 1, mOutSmall))::getExampleStack;
-			smallMax = 9;
-			this.isValid = isValid;
-			this.exampleInput = exampleInput;
-		}
+        public OreInfo(BiPredicate<World, BlockPos> isValid, List<ItemStack> exampleInput, double avg, double maxYield,
+                       @Nullable Supplier<ItemStack> out, @Nullable Supplier<ItemStack> outSmall, int smallCount, @Nullable IBlockState blockOut) {
+            avgEnergy = avg;
+            this.maxYield = maxYield;
+            output = out;
+            outputSmall = outSmall;
+            smallMax = smallCount;
+            this.isValid = isValid;
+            this.exampleInput = exampleInput;
+            this.blockOut = () -> blockOut;
+        }
 
-		public OreInfo(BiPredicate<World, BlockPos> isValid, List<ItemStack> exampleInput, double avgEnergy,
-					   double maxYield, Item iOut, int mOut) {
-			this(isValid, exampleInput, avgEnergy, maxYield, iOut, mOut, null, 0);
-		}
+        public OreInfo(BiPredicate<World, BlockPos> isValid, List<ItemStack> exampleInput, double avgEnergy, double maxYield,
+                       @Nullable Item iOut, int mOut, @Nullable Item iOutSmall, int mOutSmall, @Nullable IBlockState blockOut) {
+            this.avgEnergy = avgEnergy;
+            this.maxYield = maxYield;
+            this.output = iOut == null ? null : new IngredientStack(new ItemStack(iOut, 1, mOut))::getExampleStack;
+            this.outputSmall = iOutSmall == null ? null : new IngredientStack(new ItemStack(iOutSmall, 1, mOutSmall))::getExampleStack;
+            smallMax = 9;
+            this.isValid = isValid;
+            this.exampleInput = exampleInput;
+            this.blockOut = () -> blockOut;
+        }
 
-		public OreInfo(BiPredicate<World, BlockPos> isValid, List<ItemStack> exampleInput, double avgEnergy, double maxYield,
-					   String oreOut, @Nullable String oreSmall) {
-			this.avgEnergy = avgEnergy;
-			this.maxYield = maxYield;
-			this.output = new IngredientStack(oreOut)::getExampleStack;
-			this.outputSmall = oreSmall == null ? null : new IngredientStack(oreSmall)::getExampleStack;
-			smallMax = 9;
-			this.isValid = isValid;
-			this.exampleInput = exampleInput;
-		}
+        public OreInfo(BiPredicate<World, BlockPos> isValid, List<ItemStack> exampleInput, double avgEnergy,
+                       double maxYield, @Nullable Item iOut, int mOut, @Nullable IBlockState blockOut) {
+            this(isValid, exampleInput, avgEnergy, maxYield, iOut, mOut, null, 0, blockOut);
+        }
 
-		public OreInfo(BiPredicate<World, BlockPos> isValid, List<ItemStack> exampleInput, double avgEnergy, double maxYield,
-					   String oreOut) {
-			this(isValid, exampleInput, avgEnergy, maxYield, oreOut, null);
-		}
+        public OreInfo(BiPredicate<World, BlockPos> isValid, List<ItemStack> exampleInput, double avgEnergy, double maxYield,
+                       @Nullable String oreOut, @Nullable String oreSmall) {
+            this.avgEnergy = avgEnergy;
+            this.maxYield = maxYield;
+            this.output = oreOut == null ? null : new IngredientStack(oreOut)::getExampleStack;
+            this.outputSmall = oreSmall == null ? null : new IngredientStack(oreSmall)::getExampleStack;
+            smallMax = 9;
+            this.isValid = isValid;
+            this.exampleInput = exampleInput;
+            this.blockOut = () -> null;
+        }
 
-	}
+        public OreInfo(BiPredicate<World, BlockPos> isValid, IBlockState blockState, double avg, double maxYield,
+                       @Nullable Supplier<ItemStack> out, @Nullable Supplier<ItemStack> outSmall, int smallCount, @Nullable IBlockState blockOut) {
+
+            avgEnergy = avg;
+            this.maxYield = maxYield;
+            output = out;
+            outputSmall = outSmall;
+            smallMax = smallCount;
+            this.isValid = isValid;
+            this.exampleInput = getItem(blockState);
+            this.blockOut = () -> blockOut;
+        }
+
+        public OreInfo(BiPredicate<World, BlockPos> isValid, List<ItemStack> exampleInput, double avgEnergy, double maxYield,
+                       String oreOut) {
+            this(isValid, exampleInput, avgEnergy, maxYield, oreOut, null);
+        }
+
+        private static ArrayList<ItemStack> getItem(IBlockState in) {
+            ItemStack item = in.getBlock().getPickBlock(in, null, null, null, null);
+            ArrayList<ItemStack> ilist = new ArrayList<>();
+            if (!item.isEmpty()) {
+                ilist.add(item);
+                return ilist;
+            }
+            ilist.add(new ItemStack(in.getBlock()));
+            return ilist;
+        }
+    }
+
+
 
 	public static class OreChecker implements BiPredicate<World, BlockPos> {
 		String oreName;
@@ -209,6 +258,7 @@ public class MarxOreHandler {
 		public boolean test(World world, BlockPos here) {
 			IBlockState state = world.getBlockState(here);
 			ItemStack input = state.getBlock().getPickBlock(state, null, world, here, null);
+            if (input.isEmpty()) return false;
 			int[] ores = OreDictionary.getOreIDs(input);
 			for (int id : ores) {
 				String name = OreDictionary.getOreName(id);

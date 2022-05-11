@@ -184,8 +184,8 @@ public class MechPartFlywheel extends MechMBPart {
 		if (ORIGIN.equals(offsetPart)) {
 			return Block.FULL_BLOCK_AABB;
 		}
-		final double small = .375;
-		double xMin = offsetPart.getX()<=0?0:small;
+		final double small = .125;
+        double xMin = offsetPart.getX() <= 0 ? 0 : small;
 		double xMax = offsetPart.getX()>=0?1:1-small;
 		double yMin = offsetPart.getY()>=0?0:small;
 		double yMax = offsetPart.getY()<=0?1:1-small;

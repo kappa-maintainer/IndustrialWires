@@ -8,7 +8,7 @@
     "custom": {
       "flip-v": true
     },
-    "model": "builtin/generated"
+    "model": "immersiveengineering:ie_empty"
   },
   "variants": {
     "inventory,type=no_model": [{}],

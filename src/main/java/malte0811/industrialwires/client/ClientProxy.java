@@ -185,13 +185,13 @@ public class ClientProxy extends CommonProxy {
 				new ManualPages.Text(m, "industrialwires.jacobs1"));
 
 
-		String text = I18n.format("ie.manual.entry.industrialwires.intro");
+		StringBuilder text = new StringBuilder(I18n.format("ie.manual.entry.industrialwires.intro"));
 		splitter = new TextSplitter(m);
 		splitter.addSpecialPage(0, 0, 9, s -> new ManualPages.Crafting(m, s,
 				new ItemStack(IndustrialWires.panel, 1, BlockTypes_Panel.DUMMY.ordinal())));
 		splitter.addSpecialPage(1, 0, 9, s -> new ManualPages.Crafting(m, s,
 				new ItemStack(IndustrialWires.panel, 1, BlockTypes_Panel.UNFINISHED.ordinal())));
-		splitter.split(text);
+		splitter.split(text.toString());
 		m.addEntry("industrialwires.intro", "control_panels",
 				splitter.toManualEntry().toArray(new IManualPage[0])
 		);
@@ -200,12 +200,12 @@ public class ClientProxy extends CommonProxy {
 				new ManualPages.Text(m, "industrialwires.panel_creator1"),
 				new ManualPages.Text(m, "industrialwires.panel_creator2")
 		);
-		text = I18n.format("ie.manual.entry.industrialwires.redstone");
+		text = new StringBuilder(I18n.format("ie.manual.entry.industrialwires.redstone"));
 		splitter = new TextSplitter(m);
 		splitter.addSpecialPage(-1, 0, Compat.enableOtherRS ? 9 : 12, s -> new ManualPages.CraftingMulti(m, s,
 				new ResourceLocation(IndustrialWires.MODID, "control_panel_rs_other"),
 				new ResourceLocation(IndustrialWires.MODID, "control_panel_rs_wire")));
-		splitter.split(text);
+		splitter.split(text.toString());
 		m.addEntry("industrialwires.redstone", "control_panels",
 				splitter.toManualEntry().toArray(new IManualPage[0])
 		);
@@ -225,31 +225,35 @@ public class ClientProxy extends CommonProxy {
 				new ManualPages.Crafting(m, "industrialwires.rgb_led", new ItemStack(IndustrialWires.panelComponent, 1, 10))
 		);
 		List<MarxOreHandler.OreInfo> ores = MarxOreHandler.getRecipes();
-		text = I18n.format("ie.manual.entry.industrialwires.marx");
-		for (int i = 0; i < ores.size(); i++) {
-			MarxOreHandler.OreInfo curr = ores.get(i);
+		text = new StringBuilder(I18n.format("ie.manual.entry.industrialwires.marx"));
+		for (MarxOreHandler.OreInfo curr : ores) {
 			if (!curr.exampleInput.isEmpty()) {
-				text += I18n.format(IndustrialWires.MODID + ".desc.input") + ": §l" + curr.exampleInput.get(0).getDisplayName() + "§r<br>";
-				text += I18n.format(IndustrialWires.MODID + ".desc.output") + ": " + Utils.formatDouble(curr.maxYield, "0.#") + "x" + curr.output.get().getDisplayName() + "<br>";
-				if (curr.outputSmall != null && !curr.outputSmall.get().isEmpty()) {
-					text += I18n.format(IndustrialWires.MODID + ".desc.alt") + ": " + curr.smallMax + "x" + curr.outputSmall.get().getDisplayName() + "<br>";
+				text.append(I18n.format(IndustrialWires.MODID + ".desc.input")).append(": §l").append(curr.exampleInput.get(0).getDisplayName()).append("§r<br>");
+				if (curr.blockOut != null && curr.blockOut.get() != null) {
+					text.append(I18n.format(IndustrialWires.MODID + ".desc.blockout")).append(": ").append(curr.blockOut.get().getBlock().getLocalizedName()).append("<br>");
 				}
-				text += I18n.format(IndustrialWires.MODID + ".desc.ideal_e") + ": " + Utils.formatDouble(curr.avgEnergy * MarxOreHandler.defaultEnergy / 1000, "0.#") + " kJ<br><br>";
+				if (curr.output != null && !curr.output.get().isEmpty()) {
+					text.append(I18n.format(IndustrialWires.MODID + ".desc.output")).append(": ").append(Utils.formatDouble(curr.maxYield, "0.#")).append("x").append(curr.output.get().getDisplayName()).append("<br>");
+				}
+				if (curr.outputSmall != null && !curr.outputSmall.get().isEmpty()) {
+					text.append(I18n.format(IndustrialWires.MODID + ".desc.alt")).append(": ").append(curr.smallMax).append("x").append(curr.outputSmall.get().getDisplayName()).append("<br>");
+				}
+				text.append(I18n.format(IndustrialWires.MODID + ".desc.ideal_e")).append(": ").append(Utils.formatDouble(curr.avgEnergy * MarxOreHandler.defaultEnergy / 1000, "0.#")).append(" kJ<br><br>");
 			}
 		}
 		splitter = new TextSplitter(m);
 		splitter.addSpecialPage(0, 0, 6,
 				(s) -> new ManualPageMultiblock(m, s,
 						MultiblockMarx.INSTANCE));
-		splitter.split(text);
+		splitter.split(text.toString());
 		List<IManualPage> marxEntry = splitter.toManualEntry();
 		m.addEntry("industrialwires.marx", IndustrialWires.MODID, marxEntry.toArray(new IManualPage[0]));
 
-		text = I18n.format("ie.manual.entry.industrialwires.mech_mb");
+		text = new StringBuilder(I18n.format("ie.manual.entry.industrialwires.mech_mb"));
 		splitter = new TextSplitter(m);
 		splitter.addSpecialPage(0, 0, 8, (s) -> new ManualPageMultiblock(m, s,
 				MiscUtils.getMBFromName(MechMBPart.EXAMPLE_MECHMB_LOC.toString())));
-		splitter.split(text);
+		splitter.split(text.toString());
 		List<IManualPage> mechMBEntry = splitter.toManualEntry();
 		m.addEntry("industrialwires.mech_mb", IndustrialWires.MODID, mechMBEntry.toArray(new IManualPage[0]));
 
@@ -272,7 +276,7 @@ public class ClientProxy extends CommonProxy {
 			flywheelTable = flywheelTableList.toArray(new String[0][]);
 			flywheelTable2 = flywheelTableList2.toArray(new String[0][]);
 		}
-		text = I18n.format("ie.manual.entry.industrialwires.mech_mb_parts");
+		text = new StringBuilder(I18n.format("ie.manual.entry.industrialwires.mech_mb_parts"));
 		splitter = new TextSplitter(m);
 		splitter.addSpecialPage(0, 0, 10, (s) -> new ManualPageMultiblock(m, s,
 				MechMBPart.getManualMBForPart(MechPartFlywheel.class)));
@@ -283,11 +287,11 @@ public class ClientProxy extends CommonProxy {
 		splitter.addSpecialPage(4, 0, 10, (s) -> new ManualPageMultiblock(m, s,
 				MechMBPart.getManualMBForPart(MechPartFourElectrodes.class)));
 		if (IWConfig.MechConversion.allowMBEU()) {
-			text += I18n.format("ie.manual.entry.industrialwires.mech_mb_parts.classic.commutator");
+			text.append(I18n.format("ie.manual.entry.industrialwires.mech_mb_parts.classic.commutator"));
 			splitter.addSpecialPage(5, 0, 10, (s) -> new ManualPageMultiblock(m, s,
 					MechMBPart.getManualMBForPart(MechPartCommutator4Phase.class)));
 		}
-		splitter.split(text);
+		splitter.split(text.toString());
 		List<IManualPage> partsEntry = splitter.toManualEntry();
 		m.addEntry("industrialwires.mech_mb_parts", IndustrialWires.MODID, partsEntry.toArray(new IManualPage[0]));
 		m.entryRenderPost();

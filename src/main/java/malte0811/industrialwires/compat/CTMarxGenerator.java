@@ -19,6 +19,7 @@ import com.google.common.collect.ImmutableList;
 import crafttweaker.CraftTweakerAPI;
 import crafttweaker.IAction;
 import crafttweaker.api.block.IBlock;
+import crafttweaker.api.block.IBlockState;
 import crafttweaker.api.item.IIngredient;
 import crafttweaker.api.item.IItemStack;
 import crafttweaker.api.minecraft.CraftTweakerMC;
@@ -32,29 +33,49 @@ import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+
 
 @ZenClass("mods.industrialwires.MarxGenerator")
 public class CTMarxGenerator {
 	@ZenMethod
-	public static void addRecipe(IIngredient in, double avgRelEnergy, double maxMain, IItemStack outMain, @Optional int smallLargeRatio, @Optional IItemStack outSmall) {
-		Supplier<ItemStack> out = () -> CraftTweakerMC.getItemStack(outMain);
-		Supplier<ItemStack> supSmall = outSmall!=null?() -> CraftTweakerMC.getItemStack(outSmall):null;
+	public static void addRecipe(IIngredient in, double avgRelEnergy, double maxMain, int smallLargeRatio, @Optional IItemStack outMain, @Optional IItemStack outSmall, @Optional IBlockState blockOut) {
+		Supplier<ItemStack> out = outMain != null ? () -> CraftTweakerMC.getItemStack(outMain) : null;
+		Supplier<ItemStack> supSmall = outSmall != null ? () -> CraftTweakerMC.getItemStack(outSmall) : null;
 		if (in instanceof IItemStack) {
 			IBlock properIn = ((IItemStack) in).asBlock();
-			if (properIn!=null) {
+			if (properIn != null) {
 				CraftTweakerAPI.apply(new Add(new MarxOreHandler.OreInfo((world, pos) -> CraftTweakerMC.getBlock(world, pos.getX(), pos.getY(), pos.getZ()).matches(properIn),
-						ImmutableList.of(CraftTweakerMC.getItemStack(in)), avgRelEnergy, maxMain, out, supSmall, smallLargeRatio)));
+						ImmutableList.of(CraftTweakerMC.getItemStack(in)), avgRelEnergy, maxMain, out, supSmall, smallLargeRatio, CraftTweakerMC.getBlockState(blockOut))));
 				return;
 			}
 		} else if (in instanceof IOreDictEntry) {
 			String oreName = ((IOreDictEntry) in).getName();
 			CraftTweakerAPI.apply(new Add(new MarxOreHandler.OreInfo(new OreChecker(oreName), OreDictionary.getOres(oreName),
-					avgRelEnergy, maxMain, out, supSmall, smallLargeRatio)));
+					avgRelEnergy, maxMain, out, supSmall, smallLargeRatio, CraftTweakerMC.getBlockState(blockOut))));
 			return;
 		}
-		throw new IllegalArgumentException("Invalid parameter "+in);
+		throw new IllegalArgumentException("Invalid parameter " + in);
+	}
+
+	@ZenMethod
+	public static void addBlockRecipe(IBlockState blockIn, double avgRelEnergy, double maxMain, int smallLargeRatio, @Optional IItemStack outMain, @Optional IItemStack outSmall, @Optional IBlockState blockOut) {
+		Supplier<ItemStack> out = outMain != null ? () -> CraftTweakerMC.getItemStack(outMain) : null;
+		Supplier<ItemStack> supSmall = outSmall != null ? () -> CraftTweakerMC.getItemStack(outSmall) : null;
+
+
+		CraftTweakerAPI.apply(new Add(new MarxOreHandler.OreInfo((world, pos) -> {
+			if (blockIn.getProperties().isEmpty()) {
+				return Objects.equals(world.getBlockState(pos).getBlock().getRegistryName(), CraftTweakerMC.getBlock(blockIn.getBlock()).getRegistryName());
+			}
+			return CraftTweakerMC.getBlockState(world.getBlockState(pos)).getProperties().equals(blockIn.getProperties())
+					&& Objects.equals(world.getBlockState(pos).getBlock().getRegistryName(), CraftTweakerMC.getBlock(blockIn.getBlock()).getRegistryName());
+		},
+				CraftTweakerMC.getBlockState(blockIn), avgRelEnergy, maxMain, out, supSmall, smallLargeRatio, CraftTweakerMC.getBlockState(blockOut))));
+
+
 	}
 
 	private static class Add implements IAction {
@@ -72,7 +93,16 @@ public class CTMarxGenerator {
 
 		@Override
 		public String describe() {
-			return "Adding Marx Generator Recipe for "+ recipe.output.get();
+			if (recipe.output != null) {
+				return "Adding Marx Generator Recipe for " + recipe.output.get();
+			}
+			if (recipe.blockOut != null) {
+				return "Adding Marx Generator Recipe for " + recipe.blockOut.get();
+			}
+			if (recipe.outputSmall != null) {
+				return "Adding Marx Generator Recipe for " + recipe.outputSmall.get();
+			}
+			return "Adding Marx Generator Recipe for...nothing";
 		}
 	}
 	@ZenMethod

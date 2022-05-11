@@ -332,38 +332,37 @@ public class TileEntityMarx extends TileEntityIWMultiblock implements ITickable,
 		BlockPos bottom = getBottomElectrode();
 		List<BlockPos> toBreak = new ArrayList<>(stageCount - 2);
 		int ores = 0;
-		for (int i = 1;i<stageCount-1;i++) {
-			BlockPos blockHere = bottom.up(i);
-			if (!world.isAirBlock(blockHere)) {
-				toBreak.add(blockHere);
-				ores++;
-			}
-		}
+		for (int i = stageCount - 2; i > 0; i--) {
+            BlockPos blockHere = bottom.up(i);
+            if (!world.isAirBlock(blockHere)) {
+                toBreak.add(blockHere);
+                ores++;
+            }
+        }
 		if (ores>0) {
 			double energyPerOre = energyStored / ores;
 			for (BlockPos here:toBreak) {
-				IBlockState state = world.getBlockState(here);
-				if (state.getBlockHardness(world, here) < 0) {
-					continue;
-				}
 				if (!world.isAirBlock(here)) {
 					TileEntity te = world.getTileEntity(here);
 					if (te instanceof IMarxTarget) {
 						if (((IMarxTarget) te).onHit(energyPerOre, this)) {
 							continue;
 						}
-					}
-					ItemStack[] out = MarxOreHandler.getYield(world, here, energyPerOre);
-					for (ItemStack stack : out) {
-						EntityItem item = new EntityItem(world, here.getX() + .5, here.getY() + .5, here.getZ() + .5, stack);
-						final double maxMotion = .3;
-						item.motionX = 2 * maxMotion * (Utils.RAND.nextDouble() - .5);
-						item.motionY = 2 * maxMotion * (Utils.RAND.nextDouble() - .5);
-						item.motionZ = 2 * maxMotion * (Utils.RAND.nextDouble() - .5);
-						world.spawnEntity(item);
-					}
-					world.setBlockToAir(here);
-				}
+                    }
+                    ItemStack[] out = MarxOreHandler.getYield(world, here, energyPerOre);
+                    for (ItemStack stack : out) {
+                        EntityItem item = new EntityItem(world, here.getX() + .5, here.getY() + .5, here.getZ() + .5, stack);
+                        final double maxMotion = .3;
+                        item.motionX = 2 * maxMotion * (Utils.RAND.nextDouble() - .5);
+                        item.motionY = 2 * maxMotion * (Utils.RAND.nextDouble() - .5);
+                        item.motionZ = 2 * maxMotion * (Utils.RAND.nextDouble() - .5);
+                        world.spawnEntity(item);
+                    }
+                    //IndustrialWires.logger.info(world.getBlockState(here));
+                    IBlockState blockOut = MarxOreHandler.getBlockYield(world, here, energyPerOre);
+                    //IndustrialWires.logger.info(blockOut);
+                    world.setBlockState(here, blockOut);
+                }
 			}
 		}
 	}

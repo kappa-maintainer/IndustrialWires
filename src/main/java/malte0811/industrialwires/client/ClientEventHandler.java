@@ -181,10 +181,12 @@ public class ClientEventHandler {
 			{
 				Map<IProperty<?>, Comparable<?>> properties = state.getProperties();
 				boolean mirror = (Boolean) properties.get(IEProperties.BOOLEANS[0]);
-				return new ModelResourceLocation(
+				ModelResourceLocation l = new ModelResourceLocation(
 						new ResourceLocation(IndustrialWires.MODID,
-						BlockHVMultiblocks.NAME+(mirror?"_mirrored":"")),
+								BlockHVMultiblocks.NAME + (mirror ? "_mirrored" : "")),
 						getPropertyString(properties));
+				IndustrialWires.logger.info(l.toString());
+				return l;
 			}
 		});
 	}

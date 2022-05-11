@@ -22,7 +22,8 @@ package malte0811.industrialwires;
  import malte0811.industrialwires.blocks.BlockIWBase;
  import malte0811.industrialwires.blocks.TEDataFixer;
  import malte0811.industrialwires.blocks.controlpanel.*;
- import malte0811.industrialwires.blocks.converter.*;
+ import malte0811.industrialwires.blocks.converter.BlockMechanicalMB;
+ import malte0811.industrialwires.blocks.converter.TileEntityMechMB;
  import malte0811.industrialwires.blocks.hv.*;
  import malte0811.industrialwires.blocks.wire.*;
  import malte0811.industrialwires.compat.Compat;
@@ -88,9 +89,9 @@ package malte0811.industrialwires;
 		updateJSON = "https://raw.githubusercontent.com/malte0811/IndustrialWires/MC1.12/changelog.json")
 @Mod.EventBusSubscriber
 public class IndustrialWires {
-	public static final String MODID = "industrialwires";
-	public static final String VERSION = "1.8-45";
-	public static final String MODNAME = "Industrial Wires";
+	 public static final String MODID = "industrialwires";
+	 public static final String VERSION = "1.8-46";
+	 public static final String MODNAME = "Industrial Wires";
 	public static final int DATAFIXER_VER = 1;
 	public static final SoundEvent TINNITUS = createSoundEvent(new ResourceLocation(IndustrialWires.MODID, "tinnitus"));
 	public static final SoundEvent LADDER_START = createSoundEvent(new ResourceLocation(IndustrialWires.MODID, "jacobs_ladder_start"));//~470 ms ~=9 ticks
